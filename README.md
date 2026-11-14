@@ -66,8 +66,6 @@ In the game, go to **Options > Mods > Unsteady Body**.
 | Pogo launch | Whether downward strikes send them skywards. |
 | Upward slam | Whether upward strikes in the air drop them. |
 | Carry momentum | Experimental, off by default. A launch that's still going when they leave a room continues into the next one. Can skip room triggers such as boss-arena locks. |
-| Sounds | A dash whoosh when a launch starts and a hard-landing thud when they hit something solid. |
-| Tracker bubble | Whether the off-screen bubble appears. |
 | Detailed logging | Off by default. Writes step-by-step details to `ModLog.txt`; turn it on when reporting a bug. |
 
 ## Languages

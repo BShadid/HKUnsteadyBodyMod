@@ -60,6 +60,9 @@ namespace UnsteadyBody
                 return;
             }
 
+            // A pogo launch slows smoothly on the way up instead of holding one speed.
+            ShapePogo(self);
+
             // An angled launch (Unsteady Body + Heavy Blow) drives them itself while it lasts.
             AngledLaunch.AfterStep(self);
             if (AngledLaunch.Active) return;
@@ -98,6 +101,25 @@ namespace UnsteadyBody
             {
                 body.velocity = new Vector2(_direction * _speed, body.velocity.y);
             }
+        }
+
+        private static readonly System.Reflection.FieldInfo BounceTimer =
+            typeof(HeroController).GetField("bounceTimer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+        // The game holds the Knight at BOUNCE_VELOCITY for BOUNCE_TIME while bouncing,
+        // and ends the bounce itself on a ceiling, a hit or a dash. This only changes
+        // the speed it holds them at, using its own timer.
+        private static void ShapePogo(HeroController self)
+        {
+            HeroControllerStates c = self.cState;
+            if (!c.bouncing || !UnsteadyBodyMod.Settings.PogoLaunch || BounceTimer == null) return;
+            // Anything else moving them (a double jump, dash, wall cling, hit) wins.
+            if (c.doubleJumping || c.dashing || c.backDashing || c.superDashing || c.wallSliding
+                || c.recoiling || c.transitioning || self.controlReqlinquished) return;
+            Rigidbody2D body = self.GetComponent<Rigidbody2D>();
+            if (body == null) return;
+            float elapsed = (float)BounceTimer.GetValue(self);
+            body.velocity = new Vector2(body.velocity.x, Launch.PogoSpeedAt(self, elapsed));
         }
     }
 }

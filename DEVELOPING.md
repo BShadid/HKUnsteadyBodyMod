@@ -21,6 +21,18 @@ and what they updated, the charm menu's state when a flip is refused, the
 language picked up, and more. Off, the log only says what the mod found at
 start-up (the icon, ItemChanger) and anything that went wrong.
 
+## Settings file
+
+The sounds and the tracker bubble are always on and aren't in the options menu.
+They can still be turned off in the mod's global settings file
+(`UnsteadyBodyMod.GlobalSettings.json`, next to the game's save files), with
+the game closed:
+
+| Setting | Default | What it does |
+|---|---|---|
+| `Sounds` | `true` | The launch whoosh, the impact thud and any other sounds the mod plays. |
+| `TrackerBubble` | `true` | The off-screen bubble. |
+
 ## Translations
 
 All player-facing text is in `Strings.cs`, one table per language, using the
@@ -66,7 +78,7 @@ Run on the exact build being released, with a fresh save unless noted.
 9. **Tracker bubble.** Launch far off screen: the bubble shows them live, points
    the right way and shrinks with distance. It disappears when they're back.
 10. **Sounds.** A whoosh on launch, a thud on impact with a wall, floor or
-    ceiling. Off in the options: silent.
+    ceiling.
 11. **Another language.** Switch the game to one non-English language: the
     charm text and the Destabilize/Stabilize prompt are translated and the
     prompt still lines up with the game's own.
@@ -83,8 +95,8 @@ With Unsteady Body (Unsteady side up) **and Heavy Blow** both equipped:
 14. A low Geiger-counter crackle plays, and a green glow sits at the Knight's
     nail, flickering with each click. It follows them through turning, wall
     clinging, lying down and the Challenge pose (moving to the drawn nail once
-    it's out). It hides with them in cutscenes. Sounds off: the glow still
-    flickers, silently.
+    it's out). It hides with them in cutscenes. With `Sounds` off in the
+    settings file, the glow still flickers, silently.
 15. A nail strike on an enemy sets off an explosion (larger than a jelly's),
     launching them along the true angle away from the enemy. Terrain strikes
     stay four-directional. A grounded upslash doesn't explode.

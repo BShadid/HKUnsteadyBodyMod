@@ -12,9 +12,16 @@ namespace UnsteadyBody
     /// - A pogo holds them at BOUNCE_VELOCITY going up for BOUNCE_TIME seconds
     ///   (vanilla: 0.25 s), or until they bump their head on a ceiling.
     ///
-    /// Distance travelled is speed x time, so each preset raises both. Speed is
-    /// kept to roughly crystal-dash territory so they don't pass through thin
-    /// walls; most of the extra distance comes from making the push last longer.
+    /// Sideways: distance travelled is speed x time, so each preset raises both.
+    /// Speed is kept to roughly crystal-dash territory so they don't pass through
+    /// thin walls; most of the extra distance comes from making the push last longer.
+    ///
+    /// Pogo: each preset sets how high a launch goes. Holding a steady speed for a
+    /// long time looked like riding a lift, then stopping abruptly at the top, so
+    /// instead the launch starts fast and slows smoothly to a stop at its peak, like
+    /// a thrown object, then falls normally. (Glide shapes the speed each step,
+    /// using the game's own bounce timer, so ceilings, damage and dashes still cut
+    /// it short the usual way.)
     /// </summary>
     internal static class Launch
     {
@@ -23,8 +30,15 @@ namespace UnsteadyBody
         //                                   Wobbly Comical Absurd Ludicrous
         private static readonly float[] SideSpeed = { 5f, 8f, 10f, 10f };
         private static readonly float[] SideTime  = { 2f, 4f, 7f, 12f };
+        // Pogo presets as speed and time multipliers, from which each preset's
+        // launch height is worked out (the height the old steady push reached).
         private static readonly float[] PogoSpeed = { 2f, 2.5f, 3f, 3f };
         private static readonly float[] PogoTime  = { 2f, 4f, 6f, 10f };
+
+        // How hard a pogo launch slows on the way up, as a share of normal gravity.
+        // 1 = a true thrown arc (fastest start); lower = a gentler, floatier rise
+        // with a slower start. The height is the same either way.
+        private const float PogoRiseGravity = 0.5f;
 
         // "Speed limit" menu option. Faster settings multiply the speed and divide
         // the duration by the same amount, so they travel the same distance in less
@@ -59,8 +73,43 @@ namespace UnsteadyBody
 
             hero.RECOIL_HOR_VELOCITY = _recoilVelocity * (worn ? SideSpeed[s] * boost : 1f);
             hero.RECOIL_HOR_STEPS = _recoilSteps * (worn ? SideTime[s] / boost : 1f);
-            hero.BOUNCE_VELOCITY = _bounceVelocity * (pogo ? PogoSpeed[s] * boost : 1f);
-            hero.BOUNCE_TIME = _bounceTime * (pogo ? PogoTime[s] / boost : 1f);
+            if (pogo)
+            {
+                // Height the preset reaches, then the start speed and rise time that
+                // reach it while slowing at PogoRiseGravity x gravity. The speed limit
+                // option speeds the whole rise up without changing the height.
+                float g = Gravity(hero);
+                float held = _bounceVelocity * PogoSpeed[s];
+                float height = held * _bounceTime * PogoTime[s] + held * held / (2f * g);
+                float start = Mathf.Sqrt(2f * PogoRiseGravity * g * height);
+                hero.BOUNCE_VELOCITY = start * boost;
+                hero.BOUNCE_TIME = 2f * height / start / boost;
+            }
+            else
+            {
+                hero.BOUNCE_VELOCITY = _bounceVelocity;
+                hero.BOUNCE_TIME = _bounceTime;
+            }
+        }
+
+        /// <summary>
+        /// The upward speed a pogo launch should have this far into its rise: full
+        /// speed at the start, easing to zero at the peak. Vanilla bounces keep their
+        /// steady speed.
+        /// </summary>
+        internal static float PogoSpeedAt(HeroController hero, float elapsed)
+        {
+            if (!Active || !UnsteadyBodyMod.Settings.PogoLaunch || hero.BOUNCE_TIME <= 0f) return hero.BOUNCE_VELOCITY;
+            return hero.BOUNCE_VELOCITY * Mathf.Clamp01(1f - elapsed / hero.BOUNCE_TIME);
+        }
+
+        // The Knight's falling acceleration (world units per second squared).
+        private static float Gravity(HeroController hero)
+        {
+            Rigidbody2D body = hero.GetComponent<Rigidbody2D>();
+            float scale = body != null && body.gravityScale > 0.1f ? body.gravityScale : 0.79f;
+            float g = -Physics2D.gravity.y * scale;
+            return g > 1f ? g : 47f;
         }
 
         /// <summary>
@@ -106,7 +155,7 @@ namespace UnsteadyBody
 
             UnsteadyBodyMod.Verbose(
                 $"Vanilla values: recoil {_recoilVelocity} for {_recoilSteps} steps, " +
-                $"pogo {_bounceVelocity} for {_bounceTime}s");
+                $"pogo {_bounceVelocity} for {_bounceTime}s, gravity {Gravity(hero):0.0}");
         }
     }
 }

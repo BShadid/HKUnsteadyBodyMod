@@ -319,24 +319,6 @@ namespace UnsteadyBody
 
             entries.Add(new IMenuMod.MenuEntry
             {
-                Name = Strings.Menu("SoundsName"),
-                Description = Strings.Menu("SoundsDesc"),
-                Values = Strings.OffOn,
-                Saver = i => Settings.Sounds = i == 1,
-                Loader = () => Settings.Sounds ? 1 : 0,
-            });
-
-            entries.Add(new IMenuMod.MenuEntry
-            {
-                Name = Strings.Menu("TrackerName"),
-                Description = Strings.Menu("TrackerDesc"),
-                Values = Strings.OffOn,
-                Saver = i => Settings.TrackerBubble = i == 1,
-                Loader = () => Settings.TrackerBubble ? 1 : 0,
-            });
-
-            entries.Add(new IMenuMod.MenuEntry
-            {
                 Name = "Detailed logging",
                 Description = "Writes step-by-step details to ModLog.txt. Turn on when reporting a bug.",
                 Values = Strings.OffOn,

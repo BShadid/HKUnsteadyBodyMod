@@ -119,7 +119,8 @@ namespace UnsteadyBody
             if (_kind == Kind.Up)
             {
                 Vector2 hop = ReflectionHelper.GetField<HeroController, Vector2>(hero, "transition_vel");
-                ReflectionHelper.SetField(hero, "transition_vel", new Vector2(hop.x, hero.BOUNCE_VELOCITY));
+                float entrySpeed = Launch.PogoSpeedAt(hero, hero.BOUNCE_TIME - _remaining);
+                ReflectionHelper.SetField(hero, "transition_vel", new Vector2(hop.x, Mathf.Max(entrySpeed, hop.y)));
             }
             else
             {
@@ -189,8 +190,9 @@ namespace UnsteadyBody
             if (kind == Kind.Up)
             {
                 self.cState.bouncing = true;
-                ReflectionHelper.SetField(self, "bounceTimer", Mathf.Max(0f, self.BOUNCE_TIME - _remaining));
-                body.velocity = new Vector2(body.velocity.x, self.BOUNCE_VELOCITY);
+                float elapsed = Mathf.Max(0f, self.BOUNCE_TIME - _remaining);
+                ReflectionHelper.SetField(self, "bounceTimer", elapsed);
+                body.velocity = new Vector2(body.velocity.x, Launch.PogoSpeedAt(self, elapsed));
             }
             else
             {
