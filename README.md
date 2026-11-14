@@ -1,5 +1,7 @@
 # Unsteady Body
 
+![The Knight pogos off an enemy, rockets out of the top of the screen, and falls back down while a bubble at the screen's edge tracks them](unsteadybody.gif)
+
 Steady Body keeps the Knight planted while they swing their nail. Turn it over,
 and it does the opposite.
 
