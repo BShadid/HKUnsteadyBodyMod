@@ -98,3 +98,8 @@ duration). Otherwise, the original values are put back.
 
 Made by TCM, inspired by a name suggestion for [Stumble](https://github.com/BShadid/HKStumbleMod).
 Written with an AI assistant's help.
+
+The charm icon (`Resources/UnsteadyBody.png`) is Hollow Knight's Steady Body
+icon, turned upside down and recoloured. The original art belongs to Team
+Cherry and isn't covered by this repository's MIT licence, which applies to
+the code.
