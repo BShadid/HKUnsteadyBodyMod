@@ -46,6 +46,8 @@ Works with Randomizer 4 and anything else built on ItemChanger, wherever the
 charm ends up. It's found steady side up, like Salubra's, and its description
 hints at the other side. ItemChanger isn't required.
 
+Randomizer logic doesn't account for launches! Expect to reach places far out of logic using the Unsteady Body charm. If a section gets awkward, flip the charm back over at a bench.
+
 ## Installation
 
 Install with **Lumafly**: search for Unsteady Body and click Install. Lumafly
